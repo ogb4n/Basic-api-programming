@@ -1,26 +1,25 @@
-import Fastify from "fastify";
+import { createServer, IncomingMessage, ServerResponse } from "http";
+import { parse } from "url";
 
-const fastify = Fastify({ logger: true });
+const hostname = "127.0.0.1";
+const port = parseInt(process.env.PING_LISTEN_PORT ?? "3000", 10);
 
-fastify.get("/ping", async (request, reply) => {
-  return request.headers;
-});
+const requestHandler = (req: IncomingMessage, res: ServerResponse) => {
+  const parsedUrl = parse(req.url ?? "", true);
 
-const start = async () => {
-  try {
-    await fastify.listen({
-      port: parseInt(process.env.PING_LISTEN_PORT ?? "3000", 10),
-    });
-    fastify.log.info(
-      `Server is running at http://localhost:${parseInt(
-        process.env.PING_LISTEN_PORT ?? "3000",
-        10
-      )}`
-    );
-  } catch (err) {
-    fastify.log.error(err);
-    process.exit(1);
+  if (parsedUrl.pathname === "/ping" && req.method === "GET") {
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "application/json");
+    res.end(JSON.stringify(req.headers));
+  } else {
+    res.statusCode = 404;
+    res.setHeader("Content-Type", "text/plain");
+    res.end("Not Found");
   }
 };
 
-start();
+const server = createServer(requestHandler);
+
+server.listen(port, hostname, () => {
+  console.log(`Server running at http://${hostname}:${port}/`);
+});
