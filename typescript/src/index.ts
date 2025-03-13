@@ -1,7 +1,7 @@
 import { createServer, IncomingMessage, ServerResponse } from "http";
 import { parse } from "url";
 
-const hostname = "127.0.0.1";
+const hostname = "0.0.0.0";
 const port = parseInt(process.env.PING_LISTEN_PORT ?? "3000", 10);
 
 const requestHandler = (req: IncomingMessage, res: ServerResponse) => {

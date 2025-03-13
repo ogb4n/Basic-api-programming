@@ -24,7 +24,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .service(ping)
     })
-    .bind(("127.0.0.1", port))?
+    .bind(("0.0.0.0", port))?
     .run()
     .await
 }
